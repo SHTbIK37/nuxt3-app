@@ -14,6 +14,9 @@ console.log("app.vue");
       <NuxtLink to="/page2">
         <button>Go to Page 2</button>
       </NuxtLink>
+      <NuxtLink to="/php">
+        <button>php</button>
+      </NuxtLink>
     </header>
     <NuxtPage />
   </div>
