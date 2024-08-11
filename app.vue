@@ -17,6 +17,9 @@ console.log("app.vue");
       <NuxtLink to="/php">
         <button>php</button>
       </NuxtLink>
+      <NuxtLink to="/imports">
+        <button>imports</button>
+      </NuxtLink>
     </header>
     <NuxtPage />
   </div>

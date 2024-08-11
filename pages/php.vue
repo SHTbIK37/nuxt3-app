@@ -13,7 +13,7 @@ const phpContent = ref("");
 (async () => {
   const { data } = await useFetch("/api/hello");
   const { html, js, cssLinks, jsLinks } = data.value;
-  console.log(js);
+  console.log(data.value);
   phpContent.value = html;
 })();
 </script>
