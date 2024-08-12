@@ -13,8 +13,10 @@ export default defineEventHandler(async (event) => {
   </head>
 
   <body>
-    <button onclick="calculateSum()">Click me</button>
+  <div>
+    <button id="fetchButton" onclick="calculateSum()">Click me</button>
     <script src="./mocks"></script>
+  </div>  
   </body>
 </html>
 `;

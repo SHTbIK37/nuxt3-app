@@ -1,45 +1,40 @@
 <template>
-  <div>Dynamic import</div>
-  <div :style="bodyStyle" v-html="bodyContent"></div>
+  <p>hello</p>
+  <div ref="shadowHost"></div>
+  <!-- Элемент-хост для Shadow DOM -->
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 
-const bodyStyle = ref("");
-const bodyContent = ref("");
-const jsLinks = ref("");
-const cssLinks = ref("");
+const shadowHost = ref(null);
 
 const loadContent = async () => {
   const response = await useFetch("/api/hello"); // Запрос для получения данных
   const parser = new DOMParser();
   const doc = parser.parseFromString(response.data.value.html, "text/html");
 
-  // Извлекаем содержимое head
-  // const headContent = doc.head.innerHTML;
   const bodyContentRaw = doc.body.innerHTML;
+  const cssLinks = response.data.value.cssLinks;
+  const jsLinks = response.data.value.jsLinks;
 
-  // Добавляем содержимое head в текущий документ
-  // document.head.innerHTML += headContent;
+  const shadowRoot = shadowHost.value.attachShadow({ mode: "open" });
 
-  // Обновляем содержимое body в компоненте
-  bodyContent.value = bodyContentRaw;
+  // Вставляем содержимое body в Shadow DOM
+  shadowRoot.innerHTML = bodyContentRaw;
+  const importedModuleCss = await import(`${cssLinks}.css`);
 
-  jsLinks.value = response.data.value.jsLinks;
-  cssLinks.value = response.data.value.cssLinks;
-
-  // Динамически подключаем CSS-файл
-
-  const importedModuleCss = await import(`./${cssLinks.value}.ts`);
-  bodyStyle.value = importedModuleCss.ButtonStyle;
-  // Динамически импортируем JS-файл
-  const importedModule = await import(`./${jsLinks.value}.js`);
-
-  // Подключаем все экспортированные функции к глобальному контексту
+  // Динамически импортируем JS-файл и выполняем его в контексте Shadow DOM
+  const importedModule = await import(`${jsLinks}.js`);
   Object.keys(importedModule).forEach((key) => {
     window[key] = importedModule[key];
   });
+
+  // Динамически подключаем CSS-файлы внутри Shadow DOM
+  // const styleElement = document.createElement("link");
+  // styleElement.rel = "stylesheet";
+  // styleElement.href = `${cssLinks[0]}`;
+  // shadowRoot.appendChild(styleElement);
 };
 
 onMounted(() => {
