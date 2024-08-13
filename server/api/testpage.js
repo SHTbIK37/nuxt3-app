@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
   const document = dom.window.document;
   // Извлекаем все ссылки на CSS и JS файлы
 
+  // <link rel='stylesheet'
   const cssLinks = Array.from(
     document.querySelectorAll('link[rel="stylesheet"]')
   ).map((link) => {
@@ -16,10 +17,12 @@ export default defineEventHandler(async (event) => {
     return href;
   });
 
-  const headLinks = document.querySelectorAll("img").forEach((img) => {
+  // меняем ссылки на картинки
+  document.querySelectorAll("img").forEach((img) => {
     img.src = `https://ru.ecarstrade.com${img.src}`;
   });
 
+  // <script src = ""
   const jsLinks = Array.from(document.querySelectorAll("script[src]")).map(
     (script) => {
       const src = script.src;
@@ -28,6 +31,7 @@ export default defineEventHandler(async (event) => {
     }
   );
 
+  // <script></script>
   const rawJs = Array.from(document.querySelectorAll("script")).map((script) =>
     script.src ? script.innerText : ""
   );
