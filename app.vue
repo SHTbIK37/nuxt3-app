@@ -8,17 +8,11 @@ console.log("app.vue");
       <NuxtLink to="/">
         <button>Home</button>
       </NuxtLink>
-      <NuxtLink to="/page1">
-        <button>Go to Page 1</button>
-      </NuxtLink>
-      <NuxtLink to="/page2">
-        <button>Go to Page 2</button>
-      </NuxtLink>
-      <NuxtLink to="/php">
-        <button>php</button>
-      </NuxtLink>
       <NuxtLink to="/imports">
         <button>imports</button>
+      </NuxtLink>
+      <NuxtLink to="/ecars">
+        <button>ecars</button>
       </NuxtLink>
     </header>
     <NuxtPage />

@@ -1,17 +1,18 @@
 <template>
-  <p>dynamic imports</p>
+  <p>ecars content</p>
   <div ref="shadowHost"></div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 
 const shadowHost = ref(null);
 
 const loadContent = async () => {
-  const response = await useFetch("/api/hello");
+  const response = await useFetch("/api/testpage");
 
   const parser = new DOMParser();
+
   const doc = parser.parseFromString(response.data.value.html, "text/html");
 
   const bodyContentRaw = doc.body.innerHTML;
@@ -27,14 +28,14 @@ const loadContent = async () => {
 
   for (const css of cssCode) {
     const styleTag = document.createElement("style");
-    styleTag.textContent = css;
+    styleTag.innerHTML = css;
     shadowRoot.appendChild(styleTag);
   }
 
-  // Выполняем JS код в контексте Shadow DOM
+  // // Выполняем JS код в контексте Shadow DOM
   for (const js of jsCode) {
     const scriptTag = document.createElement("script");
-    scriptTag.textContent = js;
+    scriptTag.innerHTML = js;
     shadowRoot.appendChild(scriptTag);
   }
 };
