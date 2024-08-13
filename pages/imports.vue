@@ -1,7 +1,6 @@
 <template>
-  <p>hello</p>
+  <p>dynamic imports</p>
   <div ref="shadowHost"></div>
-  <!-- Элемент-хост для Shadow DOM -->
 </template>
 
 <script setup>
@@ -10,31 +9,34 @@ import { ref, onMounted } from "vue";
 const shadowHost = ref(null);
 
 const loadContent = async () => {
-  const response = await useFetch("/api/hello"); // Запрос для получения данных
+  const response = await useFetch("/api/hello");
+
   const parser = new DOMParser();
   const doc = parser.parseFromString(response.data.value.html, "text/html");
 
   const bodyContentRaw = doc.body.innerHTML;
-  const cssLinks = response.data.value.cssLinks;
-  const jsLinks = response.data.value.jsLinks;
+  const cssCode = response.data.value.cssCode;
+  const jsCode = response.data.value.jsCode;
 
   const shadowRoot = shadowHost.value.attachShadow({ mode: "open" });
 
   // Вставляем содержимое body в Shadow DOM
   shadowRoot.innerHTML = bodyContentRaw;
-  const importedModuleCss = await import(`${cssLinks}.css`);
 
-  // Динамически импортируем JS-файл и выполняем его в контексте Shadow DOM
-  const importedModule = await import(`${jsLinks}.js`);
-  Object.keys(importedModule).forEach((key) => {
-    window[key] = importedModule[key];
-  });
+  // Вставляем CSS в Shadow DOM
 
-  // Динамически подключаем CSS-файлы внутри Shadow DOM
-  // const styleElement = document.createElement("link");
-  // styleElement.rel = "stylesheet";
-  // styleElement.href = `${cssLinks[0]}`;
-  // shadowRoot.appendChild(styleElement);
+  for (const css of cssCode) {
+    const styleTag = document.createElement("style");
+    styleTag.textContent = css;
+    shadowRoot.appendChild(styleTag);
+  }
+
+  // Выполняем JS код в контексте Shadow DOM
+  for (const js of jsCode) {
+    const scriptTag = document.createElement("script");
+    scriptTag.textContent = js;
+    shadowRoot.appendChild(scriptTag);
+  }
 };
 
 onMounted(() => {
@@ -43,5 +45,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Добавь стили, если необходимо */
+/* Добавьте стили, если необходимо */
 </style>

@@ -1,32 +1,13 @@
 import { JSDOM } from "jsdom";
 
 export default defineEventHandler(async (event) => {
-  // Получаем HTML-страницу
-  const html = `
-  <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple Button Example</title>
-    <link rel="stylesheet" href="./style" />
-  </head>
+  const res = await fetch("http://localhost:8000/test.php");
+  const html = await res.text();
 
-  <body>
-  <div>
-    <button id="fetchButton" onclick="calculateSum()">Click me</button>
-    <script src="./mocks"></script>
-  </div>  
-  </body>
-</html>
-`;
-  // Парсим HTML
   const dom = new JSDOM(html);
   const document = dom.window.document;
   // Извлекаем все ссылки на CSS и JS файлы
-  const js = Array.from(document.querySelectorAll("script")).map((script) => {
-    if (!script.src) return script.innerHTML;
-  });
+
   const cssLinks = Array.from(
     document.querySelectorAll('link[rel="stylesheet"]')
   ).map((link) => link.href);
@@ -34,10 +15,19 @@ export default defineEventHandler(async (event) => {
     (script) => script.src
   );
 
+  const cssPromises = cssLinks.map((link) =>
+    fetch(`http://localhost:8000${link}`).then((res) => res.text())
+  );
+  const jsPromises = jsLinks.map((link) =>
+    fetch(`http://localhost:8000${link}`).then((res) => res.text())
+  );
+
+  const cssCode = await Promise.all(cssPromises);
+  const jsCode = await Promise.all(jsPromises);
+
   return {
     html,
-    js,
-    cssLinks,
-    jsLinks,
+    jsCode,
+    cssCode,
   };
 });
